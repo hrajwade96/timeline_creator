@@ -15,7 +15,9 @@ class TimelineChartState extends State<TimelineChart> {
 
   @override
   Widget build(BuildContext context) {
-    int earliestStartTime = widget.events.map((event) => event.start).reduce((a, b) => a < b ? a : b);
+    int earliestStartTime = widget.events
+        .map((event) => event.start)
+        .reduce((a, b) => a < b ? a : b);
 
     return Column(
       children: [
@@ -53,11 +55,21 @@ class TimelineChartState extends State<TimelineChart> {
                               children: [
                                 SizedBox(width: offset / _zoomLevel),
                                 Tooltip(
-                                  message: "${event.content}\nStart: ${_formatTimestamp(event.start)}\nEnd: ${_formatTimestamp(event.end)}\nDuration: $duration ms",
+                                  message:
+                                      "${event.content}\nStart: ${_formatTimestamp(event.start)}\nEnd: ${_formatTimestamp(event.end)}\nDuration: $duration ms",
                                   child: Container(
                                     width: duration / _zoomLevel,
                                     height: 20,
                                     color: color,
+                                    child: Center(
+                                      child: Text(
+                                        "$duration ms",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -83,7 +95,7 @@ class TimelineChartState extends State<TimelineChart> {
                 });
               },
             ),
-            Text('Zoom: ${100-_zoomLevel.floor()}'),
+            Text('Zoom: ${100 - _zoomLevel.floor()}'),
             IconButton(
               icon: const Icon(Icons.zoom_in),
               onPressed: () {
@@ -114,5 +126,4 @@ class TimelineChartState extends State<TimelineChart> {
       return Colors.blue[800]!;
     }
   }
-
 }
