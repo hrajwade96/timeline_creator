@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+
 import '../timeline.dart';
 import '../timeline_chart.dart';
 
@@ -12,6 +13,7 @@ class TimelineChartPage extends StatefulWidget {
 
 class TimelineChartPageState extends State<TimelineChartPage> {
   List<TimelineEvent> events = [];
+  bool _isFullScreen = false;
 
   @override
   void initState() {
@@ -21,7 +23,8 @@ class TimelineChartPageState extends State<TimelineChartPage> {
   }
 
   Future<void> loadJson() async {
-    final jsonString = await DefaultAssetBundle.of(context).loadString('assets/events.json');
+    final jsonString =
+        await DefaultAssetBundle.of(context).loadString('assets/events.json');
     setState(() {
       events = parseEvents(jsonString);
     });
@@ -41,25 +44,45 @@ class TimelineChartPageState extends State<TimelineChartPage> {
     }
   }
 
+  void toggleFullScreen() {
+    setState(() {
+      _isFullScreen = !_isFullScreen;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Timeline Chart'),
-      ),
+      appBar: _isFullScreen
+          ? null
+          : AppBar(
+              title: const Text('Timeline Visualizer'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.fullscreen),
+                  onPressed: toggleFullScreen,
+                ),
+              ],
+            ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: pickFile,
-              child: const Text('Import JSON'),
+          if (!_isFullScreen)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: pickFile,
+                child: const Text('Import JSON'),
+              ),
             ),
-          ),
           Expanded(
             child: events.isEmpty
-                ? const Center(child: Text("Please select a JSON file to display the timeline."))
-                : TimelineChart(events: events),
+                ? const Center(
+                    child: Text(
+                        "Please select a JSON file to display the timeline."))
+                : TimelineChart(
+                    events: events,
+                    isFullScreen: _isFullScreen,
+                    toggleFullScreen: toggleFullScreen),
           ),
         ],
       ),
