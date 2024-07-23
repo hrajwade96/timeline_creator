@@ -31,12 +31,11 @@ Sample JSON:
 
   List<TimelineEvent> events = [];
   bool _isFullScreen = false;
+  String? _fileName; //stores filename
 
   @override
   void initState() {
     super.initState();
-    // Optionally load a default JSON file
-    // loadJson();
   }
 
   Future<void> loadJson() async {
@@ -44,6 +43,7 @@ Sample JSON:
         await DefaultAssetBundle.of(context).loadString('assets/events.json');
     setState(() {
       events = parseEvents(jsonString);
+      _fileName = 'events.json'; // Default file name
     });
   }
 
@@ -57,6 +57,7 @@ Sample JSON:
       String fileContent = String.fromCharCodes(result.files.single.bytes!);
       setState(() {
         events = parseEvents(fileContent);
+        _fileName = result.files.single.name; // Setting file name
       });
     }
   }
@@ -88,12 +89,27 @@ Sample JSON:
           if (!_isFullScreen)
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(
-                onPressed: pickFile,
-                child: const Text(
-                  'Import JSON',
-                  style: TextStyle(color: Colors.blue),
-                ),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: pickFile,
+                    child: const Text(
+                      'Import JSON',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                  if (_fileName != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'File: $_fileName',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           if (events.isEmpty)

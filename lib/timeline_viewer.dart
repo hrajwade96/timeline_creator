@@ -61,8 +61,7 @@ class TimelineViewerState extends State<TimelineViewer> {
                     labelText: 'Filter Events',
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor:
-                        Colors.white70, // Background color of the TextField
+                    fillColor: Colors.white70,
                     suffixIcon: _filterController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear),
@@ -197,13 +196,27 @@ class TimelineViewerState extends State<TimelineViewer> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(event.content),
+          backgroundColor:
+              Colors.white, // Set background color of the AlertDialog
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(16.0), // Rounded corners for the dialog
+          ),
+          title: Text(
+            event.content,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Start: ${_formatTimestamp(event.start)}"),
-              Text("End: ${_formatTimestamp(event.end)}"),
-              Text("Duration: ${event.end - event.start} ms"),
+              _buildDetailRow("Start:", _formatTimestamp(event.start)),
+              _buildDetailRow("End:", _formatTimestamp(event.end)),
+              _buildDetailRow("Duration:", "${event.end - event.start} ms"),
             ],
           ),
           actions: [
@@ -211,11 +224,37 @@ class TimelineViewerState extends State<TimelineViewer> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Close'),
+              child: const Text('Close', style: TextStyle(color: Colors.blue)),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
