@@ -14,7 +14,7 @@ class TimelineViewerPage extends StatefulWidget {
 class TimelineViewerPageState extends State<TimelineViewerPage> {
   static const String guidelinesText = '''
 Guidelines:
-1. Click on 'Import JSON' to upload your timeline events.
+1. Click on 'Import JSON' to upload your timeline events json file.
 2. The JSON file should be an array of events.
 3. Each event should include the following fields:
    - id (int): A unique identifier for the event.
@@ -70,9 +70,11 @@ Sample JSON:
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white70,
       appBar: _isFullScreen
           ? null
           : AppBar(
+              backgroundColor: Colors.blue[50],
               title: const Text('Timeline Viewer'),
               actions: [
                 IconButton(
@@ -88,13 +90,17 @@ Sample JSON:
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 onPressed: pickFile,
-                child: const Text('Import JSON'),
+                child: const Text(
+                  'Import JSON',
+                  style: TextStyle(color: Colors.blue),
+                ),
               ),
             ),
           if (events.isEmpty)
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Card(
+                color: Color(0xFFE3F2FD),
                 elevation: 4.0,
                 margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                 child: Padding(

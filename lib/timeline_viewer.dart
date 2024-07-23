@@ -6,24 +6,29 @@ class TimelineViewer extends StatefulWidget {
   final bool isFullScreen;
   final VoidCallback toggleFullScreen;
 
-  const TimelineViewer(
-      {super.key,
-      required this.events,
-      required this.isFullScreen,
-      required this.toggleFullScreen});
+  const TimelineViewer({
+    super.key,
+    required this.events,
+    required this.isFullScreen,
+    required this.toggleFullScreen,
+  });
 
   @override
   TimelineViewerState createState() => TimelineViewerState();
 }
 
 class TimelineViewerState extends State<TimelineViewer> {
-  double _zoomLevel = 50.0; // More zoomed out by default
+  double _zoomLevel = 10.0;
   List<TimelineEvent> _filteredEvents = [];
+  final TextEditingController _filterController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _filteredEvents = widget.events;
+    _filterController.addListener(() {
+      _filterEvents(_filterController.text);
+    });
   }
 
   void _filterEvents(String query) {
@@ -48,12 +53,28 @@ class TimelineViewerState extends State<TimelineViewer> {
         if (!widget.isFullScreen)
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search Events',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: _filterEvents,
+            child: Stack(
+              children: [
+                TextField(
+                  controller: _filterController,
+                  decoration: InputDecoration(
+                    labelText: 'Filter Events',
+                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor:
+                        Colors.white70, // Background color of the TextField
+                    suffixIcon: _filterController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _filterController.clear();
+                              _filterEvents('');
+                            },
+                          )
+                        : null,
+                  ),
+                ),
+              ],
             ),
           ),
         Expanded(
@@ -77,7 +98,11 @@ class TimelineViewerState extends State<TimelineViewer> {
                                 return Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 4.0),
-                                  child: Text(event.content),
+                                  child: Text(
+                                    event.content,
+                                    style: const TextStyle(
+                                        color: Colors.black87), // Text color
+                                  ),
                                 );
                               }).toList(),
                             ),
@@ -151,7 +176,7 @@ class TimelineViewerState extends State<TimelineViewer> {
               icon: const Icon(Icons.refresh),
               onPressed: () {
                 setState(() {
-                  _zoomLevel = 50.0;
+                  _zoomLevel = 10.0; // Reset zoom level to 90.0
                 });
               },
             ),
